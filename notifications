@@ -71,4 +71,11 @@ function notifications.notify(info)
 	end)
 end
 
+function notifications.unload()
+	warn(notifications.name.." has unloaded.")
+
+	screen_gui:Destroy()
+	notifications = nil
+end
+
 return notifications
