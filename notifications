@@ -33,7 +33,7 @@ function notifications.notify(info)
 	local text_label = Instance.new('TextLabel')
 	text_label.Font = Enum.Font.SourceSans
 	text_label.RichText = true
-	text_label.Text = '<font color="rgb('..notifications.color..')">'..notifications.name..'</font>'.." > "..info
+	text_label.Text = '<font color="rgb('..notifications.color..')">'..notifications.name..'</font>'.."    > "..info
 	text_label.TextColor3 = Color3.new(1, 1, 1)
 	text_label.TextScaled = true
 	text_label.TextSize = 14
