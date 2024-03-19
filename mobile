@@ -1,0 +1,98 @@
+local http_service = game.HttpService
+local user_input_service = game.UserInputService
+local players = game.Players
+local localPlayer = players.LocalPlayer
+
+local screen_gui = Instance.new('ScreenGui')
+screen_gui.Parent = game.CoreGui
+screen_gui.Name = tostring(http_service:GenerateGUID(false))
+
+local toggle_button = Instance.new("ImageButton")
+toggle_button.Image = "http://www.roblox.com/asset/?id=16800064126"
+toggle_button.ImageColor3 = Color3.new(0.258824, 0.282353, 0.478431)
+toggle_button.ImageTransparency = 0.4000000059604645
+toggle_button.AnchorPoint = Vector2.new(0.5, 0.5)
+toggle_button.BackgroundColor3 = Color3.new(0.0745098, 0.0784314, 0.168627)
+toggle_button.BackgroundTransparency = 0.20000000298023224
+toggle_button.BorderColor3 = Color3.new(0, 0, 0)
+toggle_button.BorderSizePixel = 0
+toggle_button.Position = UDim2.new(0.499600142, 0, 0.499703914, 0)
+toggle_button.Size = UDim2.new(0.0601322912, 0, 0.125470519, 0)
+toggle_button.Visible = true
+toggle_button.Name = "ToggleButton"
+toggle_button.Parent = screen_gui
+
+local uiaspect_ratio_constraint = Instance.new("UIAspectRatioConstraint")
+uiaspect_ratio_constraint.Parent = toggle_button
+
+local uicorner = Instance.new("UICorner")
+uicorner.CornerRadius = UDim.new(8, 8)
+uicorner.Parent = toggle_button
+
+local uistroke = Instance.new("UIStroke")
+uistroke.Color = Color3.new(0.258824, 0.282353, 0.478431)
+uistroke.Parent = toggle_button
+
+local moving_button = false
+local held_down = false
+local toggle = false
+
+function world_to_screen(position)
+    local point = workspace.CurrentCamera.CoordinateFrame:PointToObjectSpace(position)
+    local aspect_ratio = localPlayer:GetMouse().ViewSizeX / localPlayer:GetMouse().ViewSizeY
+    local h_factor = math.tan(math.rad(workspace.CurrentCamera.FieldOfView) / 3)
+    local w_factor = aspect_ratio*h_factor
+
+    local x = (point.x/point.z) / -w_factor
+    local y = (point.y/point.z) /  h_factor
+
+    return Vector2.new(localPlayer:GetMouse().ViewSizeX * (0.5 + 0.5 * x), localPlayer:GetMouse().ViewSizeY * (0.5 + 0.5 * y))
+end
+
+user_input_service.InputEnded:Connect(function(input, ignore)
+    if ignore then return end
+
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        held_down = false
+    end
+end)
+
+toggle_button.MouseButton1Up:Connect(function()
+    held_down = false
+
+    if moving_button then
+        -- get new player
+    end
+end)
+
+toggle_button.MouseButton1Down:Connect(function()
+    held_down = true
+
+    local timer = tick()
+    repeat
+        task.wait()
+
+        if tick() - timer >= 3 and held_down == true then
+            moving_button = true
+            repeat
+                task.wait()
+
+                local vector2 = world_to_screen(localPlayer:GetMouse().Hit.Position)
+                toggle_button.Position = UDim2.new(0, vector2.X, 0, vector2.Y)
+            until held_down == false
+
+            moving_button = false
+        end
+    until held_down == false
+end)
+
+local size = toggle_button.Size
+local angle = 0
+while toggle_button and task.wait() do
+    toggle_button.Rotation += math.sin(angle)
+
+    angle = angle + 0.01
+    if angle > (math.pi * 2) then
+        angle = 0
+    end
+end
