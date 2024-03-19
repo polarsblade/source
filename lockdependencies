@@ -15,13 +15,7 @@ function dependencies.on_screen(part)
 	local vector, in_viewport = camera:WorldToViewportPoint(part_to_check.Position)
 	local on_screen = in_viewport and vector.Z > 0
 
-	local ray = camera:ViewportPointToRay(vector.X, vector.Y, 0)
-	local raycast_params = RaycastParams.new()
-	raycast_params.FilterType = Enum.RaycastFilterType.Blacklist
-	raycast_params.FilterDescendantsInstances = {part_to_check, game.Players.LocalPlayer.Character}
-	local raycast_result = workspace:Raycast(ray.Origin, ray.Direction * 1000, raycast_params)
-
-	local is_visible = on_screen and not raycast_result
+	local is_visible = on_screen
 	
 	return is_visible
 end
