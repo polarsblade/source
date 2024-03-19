@@ -50,6 +50,10 @@ function notifications.notify(info)
 	text_label.Visible = true
 	text_label.Parent = frame
 
+	local uitext_size_constraint = Instance.new("UITextSizeConstraint")
+	uitext_size_constraint.MaxTextSize = 18
+	uitext_size_constraint.Parent = text_label
+
 	tween_service:Create(text_label, TweenInfo.new(0.5, Enum.EasingStyle.Quad), {
 		TextStrokeTransparency = 0.4000000059604645,
 		TextTransparency = 0,
