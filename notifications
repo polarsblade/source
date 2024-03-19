@@ -1,0 +1,70 @@
+local http_service = game:GetService('HttpService')
+local tween_service = game.TweenService
+
+local screen_gui = Instance.new('ScreenGui')
+screen_gui.Parent = game.CoreGui
+screen_gui.Name = tostring(http_service:GenerateGUID(false))
+
+local frame = Instance.new('Frame')
+frame.AnchorPoint = Vector2.new(0.5, 0.5)
+frame.BackgroundTransparency = 1
+frame.BorderSizePixel = 0
+frame.Position = UDim2.new(0.499600083, 0, 0.858549535, 0)
+frame.Size = UDim2.new(0.279013783, 0, 0.125470519, 0)
+frame.Visible = true
+frame.Parent = screen_gui
+
+local uilist_layout = Instance.new("UIListLayout")
+uilist_layout.SortOrder = Enum.SortOrder.LayoutOrder
+uilist_layout.VerticalAlignment = Enum.VerticalAlignment.Bottom
+uilist_layout.Parent = frame
+
+local notifications = {name = 'placeholder', color = '255, 255, 255'}
+
+function notifications.set_name(setname)
+    notifications.name = setname
+end
+
+function notifications.set_color(rgb)
+    notifications.color = rgb
+end
+
+function notifications.notify(info)
+    local text_label = Instance.new('TextLabel')
+    text_label.Font = Enum.Font.SourceSans
+    text_label.RichText = true
+    text_label.Text = '<font color='rgb('..notifications.color..')>'..'notifications.name</font>'..info
+    text_label.TextColor3 = Color3.new(1, 1, 1)
+    text_label.TextScaled = true
+    text_label.TextSize = 14
+    text_label.TextStrokeTransparency = 1
+    text_label.TextTransparency = 1
+    text_label.TextWrapped = true
+    text_label.AnchorPoint = Vector2.new(0.5, 0.5)
+    text_label.BackgroundColor3 = Color3.new(1, 1, 1)
+    text_label.BackgroundTransparency = 1
+    text_label.BorderColor3 = Color3.new(0, 0, 0)
+    text_label.BorderSizePixel = 0
+    text_label.Position = UDim2.new(0.498908728, 0, 0, 0)
+    text_label.Size = UDim2.new(1, 0, 0.300000012, 0)
+    text_label.Visible = true
+    text_label.Parent = frame
+
+    tween_service:Create(text_label, TweenInfo.new(0.5, Enum.EasingStyle.Quad), {
+        TextStrokeTransparency = 0.4000000059604645,
+        TextTransparency = 0,
+        Size = UDim2.new(1, 0, 0.300000012, 0)
+    }):Play()
+
+    task.delay(5, function()
+        tween_service:Create(text_label, TweenInfo.new(0.5, Enum.EasingStyle.Quad), {
+            TextStrokeTransparency = 1,
+            TextTransparency = 1,
+        }):Play()
+
+        task.wait(0.5)
+        text_label:Destroy()
+    end)
+end
+
+return notifications
