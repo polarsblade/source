@@ -1,0 +1,44 @@
+local dependencies = {}
+
+function dependencies.world_to_viewport_point(position)
+    return workspace.CurrentCamera:WorldToViewPortPoint(position)
+end
+
+function dependencies.world_to_screen_point(position)
+    return workspace.CurrentCamera:WorldToScreenPoint(position)
+end
+
+function dependencies.obscured_ray(startpos, endpos, target)
+    local rayOrigin = startpos
+    local rayDirection = endpos - startpos
+
+    local raycastParams = RaycastParams.new()
+    raycastParams.FilterDescendantsInstances = {game.Players.LocalPlayer.Character, target}
+    raycastParams.FilterType = Enum.RaycastFilterType.Exclude
+
+    local raycastResult = workspace:Raycast(rayOrigin, rayDirection, raycastParams)
+    if raycastResult then
+        return true
+    else
+        return false
+    end
+end
+
+function dependencies.get_target(position)
+    local closest = nil
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        if player ~= game.Players.LocalPlayer and player.Character then
+            if closest then
+                if (closest.Character.HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude > (player.Character.HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude then
+                    closest = player
+                end
+            else
+                closest = player
+            end
+        end
+    end
+
+    return closest
+end
+
+return dependencies
