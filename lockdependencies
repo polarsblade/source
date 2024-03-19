@@ -41,7 +41,7 @@ function dependencies.get_target(position)
     for _, player in ipairs(game.Players:GetPlayers()) do
         if player ~= game.Players.LocalPlayer and player.Character and dependencies.on_screen(player.Character.HumanoidRootPart) then
             if closest then
-                if (closest.Character.HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude > (player.Character.HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude then
+                if (closest.Character.HumanoidRootPart.Position - position).Magnitude > (player.Character.HumanoidRootPart.Position - position).Magnitude then
                     closest = player
                 end
             else
