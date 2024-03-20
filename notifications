@@ -60,7 +60,7 @@ function notifications.notify(info)
 		Size = UDim2.new(1, 0, 0.300000012, 0)
 	}):Play()
 
-	task.delay(5, function()
+	task.delay(1.5, function()
 		tween_service:Create(text_label, TweenInfo.new(0.5, Enum.EasingStyle.Quad), {
 			TextStrokeTransparency = 1,
 			TextTransparency = 1,
