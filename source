@@ -28,7 +28,7 @@ local locking = false
 local target = nil
 
 local highlight = nil
-
+local billboard = nil
 if getgenv().input_detection == nil then
     getgenv().input_began_detection = user_input_service.InputBegan:Connect(function(input, ignore)
         if ignore then return end
@@ -38,21 +38,62 @@ if getgenv().input_detection == nil then
                 target = getgenv().lock_functions.get_target(mouse.Hit.Position)
                 if target then
                     user_input_service.MouseIconEnabled = false
+
+                    billboard = Instance.new("BillboardGui")
+                    billboard.Active = true
+                    billboard.AlwaysOnTop = true
+                    billboard.ClipsDescendants = true
+                    billboard.LightInfluence = 1
+                    billboard.Size = UDim2.new(15, 0, 15, 0)
+                    billboard.ResetOnSpawn = true
+                    billboard.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+                    billboard.Parent = target.Character.HumanoidRootPart
+
+                    local image = Instance.new("ImageLabel")
+                    image.Image = "http://www.roblox.com/asset/?id=16802101786"
+                    image.AnchorPoint = Vector2.new(0.5, 0.5)
+                    image.BackgroundColor3 = Color3.new(1, 1, 1)
+                    image.BackgroundTransparency = 1
+                    image.BorderColor3 = Color3.new(0, 0, 0)
+                    image.BorderSizePixel = 0
+                    image.Position = UDim2.new(0.5, 0, 0.5, 0)
+                    image.ImageColor3 = Color3.fromRGB(26, 35, 92)
+                    image.Size = UDim2.new(1, 0, 1, 0)
+                    image.Visible = true
+                    image.Parent = billboard
+
                     highlight = Instance.new("Highlight")
                     highlight.Parent = target.Character
                     highlight.FillTransparency = 1
                     highlight.OutlineTransparency = 0
                     highlight.OutlineColor = Color3.fromRGB(26, 35, 92)
 
-                    getgenv().notifications.notify("locked | "..target.Name.." |")
+                    getgenv().notifications.notify("locked // "..target.Name)
+
+                    image_size_original = image.Size
+
+                    spin = 0.05
                     pcall(function()
                         repeat
                             task.wait()
+                            
+                            spin += 0.05
+                            if spin >= (math.pi * 2) then
+                                spin = 0
+                            end
+                            image.Rotation += spin
 
-                            workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, target.Character.UpperTorso.Position + target.Character.UpperTorso.Velocity / getgenv().prediction)
+                            workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, target.Character.HumanoidRootPart.Position + target.Character.HumanoidRootPart.Velocity / getgenv().prediction)
+                        
+                            if getgenv().downed_check then
+                                if target.Character.BodyEffects["K.O"].Value == true or target.Character.BodyEffects["Dead"].Value == true then
+                                    getgenv().notifications.notify("downed // "..target.Name.." |")
+                                    break
+                                end
+                            end
                         until not target
                     end)
-                    
+
                     user_input_service.MouseIconEnabled = true
                 else
                     getgenv().notifications.notify("failed to lock on")
@@ -60,10 +101,16 @@ if getgenv().input_detection == nil then
             else
                 target = nil
 
+                if billboard then
+                    billboard:Destroy()
+                    billboard = nil
+                end
+
                 if highlight then
                     highlight:Destroy()
                     highlight = nil
                 end
+
                 getgenv().notifications.notify("lock disabled")
             end
         end
