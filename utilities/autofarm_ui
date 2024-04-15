@@ -22,7 +22,7 @@ local data_folder = local_player:WaitForChild("DataFolder")
 
 --> Gui
 local polars_autofarm = Instance.new("ScreenGui")
-polars_autofarm.IgnoreGuiInset = false
+polars_autofarm.IgnoreGuiInset = true
 polars_autofarm.ResetOnSpawn = true
 polars_autofarm.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 polars_autofarm.Name = "Polars Autofarm"
