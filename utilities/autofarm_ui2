@@ -49,6 +49,7 @@ holder.Size = UDim2.new(1, 0, 1, 0)
 holder.Visible = true
 holder.Name = "Holder"
 holder.Parent = polars_autofarm
+holder.BackgroundTransparency = 1
 
 local gui = Instance.new("CanvasGroup")
 gui.GroupColor3 = Color3.new(0.886275, 0.886275, 0.886275)
