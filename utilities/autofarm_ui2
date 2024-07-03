@@ -16,9 +16,20 @@ function convert_to_hms(seconds)
 	return hms_format(hours)..":"..hms_format(minutes)..":"..hms_format(seconds)
 end
 
+
 --> Important Stuff
 local local_player = game.Players.LocalPlayer
 local data_folder = local_player:WaitForChild("DataFolder")
+
+local data = nil
+local startingcash = data_folder:WaitForChild("Currency").Value
+local timeelapsed = tick()
+if isfile("polarsblade.txt") then
+    data = game:GetService("HttpService"):JSONDecode(readfile("polarsblade.txt"))
+
+    startingcash = data.startingcash
+    timeelapsed = data.timeelapsed
+end
 
 --> Gui
 local polars_autofarm = Instance.new("ScreenGui")
@@ -224,10 +235,9 @@ text_label_2.Font = Enum.Font.Gotham
 
 --> Profit Updater
 task.spawn(function()
-    local starting_cash = data_folder:WaitForChild("Currency").Value
     while task.wait() do
         pcall(function()
-            text_label_2.Text = "$"..format(data_folder:WaitForChild("Currency").Value - starting_cash)
+            text_label_2.Text = "$"..format(data_folder:WaitForChild("Currency").Value - startingcash)
         end)
     end
 end)
@@ -292,10 +302,9 @@ text_label_3.Font = Enum.Font.Gotham
 
 --> Time Elapsed Updater
 task.spawn(function()
-    local starting_time = tick()
     while task.wait() do
         pcall(function()
-            text_label_3.Text = tostring(convert_to_hms(math.floor(tick() - starting_time)))
+            text_label_3.Text = tostring(convert_to_hms(math.floor(tick() - timeelapsed)))
         end)
     end
 end)
