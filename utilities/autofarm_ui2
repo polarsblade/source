@@ -103,7 +103,7 @@ container.Name = "Container"
 container.Parent = gui
 
 local uilist_layout = Instance.new("UIListLayout")
-uilist_layout.Padding = UDim.new(0.11, 0)
+uilist_layout.Padding = UDim.new(0.06, 0)
 uilist_layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 uilist_layout.SortOrder = Enum.SortOrder.LayoutOrder
 uilist_layout.Parent = container
