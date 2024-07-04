@@ -1,1 +1,369 @@
+--> Functions
+local function format(number)
+    number = tostring(number)
+    return number:reverse():gsub("...","%0,",math.floor((#number-1)/3)):reverse()
+end
 
+function hms_format(Int)
+	return string.format("%02i", Int)
+end
+
+function convert_to_hms(seconds)
+	local minutes = (seconds - seconds%60)/60
+	seconds = seconds - minutes*60
+	local hours = (minutes - minutes%60)/60
+	minutes = minutes - hours*60
+	return hms_format(hours)..":"..hms_format(minutes)..":"..hms_format(seconds)
+end
+
+
+--> Important Stuff
+local local_player = game.Players.LocalPlayer
+local data_folder = local_player:WaitForChild("DataFolder")
+
+local data = nil
+local startingcash = data_folder:WaitForChild("Currency").Value
+local timeelapsed = tick()
+if isfile("polarsblade.txt") then
+    data = game:GetService("HttpService"):JSONDecode(readfile("polarsblade.txt"))
+
+    startingcash = data.startingcash
+    timeelapsed = data.timeelapsed
+end
+
+--> Gui
+local polars_autofarm = Instance.new("ScreenGui")
+polars_autofarm.IgnoreGuiInset = true
+polars_autofarm.ResetOnSpawn = true
+polars_autofarm.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+polars_autofarm.Name = "Polars Autofarm"
+polars_autofarm.Parent = game.CoreGui
+
+local holder = Instance.new("Frame")
+holder.AnchorPoint = Vector2.new(0.5, 0.5)
+holder.BackgroundColor3 = Color3.new(0.0156863, 0.0156863, 0.0156863)
+holder.BorderColor3 = Color3.new(0, 0, 0)
+holder.BorderSizePixel = 0
+holder.Position = UDim2.new(0.5, 0, 0.5, 0)
+holder.Size = UDim2.new(1, 0, 1, 0)
+holder.Visible = true
+holder.Name = "Holder"
+holder.Parent = polars_autofarm
+
+local gui = Instance.new("CanvasGroup")
+gui.GroupColor3 = Color3.new(0.886275, 0.886275, 0.886275)
+gui.AnchorPoint = Vector2.new(0.5, 0.5)
+gui.BackgroundColor3 = Color3.new(0.0431373, 0.0431373, 0.0431373)
+gui.BorderColor3 = Color3.new(0, 0, 0)
+gui.BorderSizePixel = 0
+gui.Position = UDim2.new(0.5, 0, 0.5, 0)
+gui.Size = UDim2.new(0.231707349, 0, 0.405027926, 0)
+gui.Visible = true
+gui.Name = "Gui"
+gui.Parent = holder
+
+local uicorner = Instance.new("UICorner")
+uicorner.Parent = gui
+
+local uistroke = Instance.new("UIStroke")
+uistroke.Color = Color3.new(0.188235, 0.188235, 0.188235)
+uistroke.Parent = gui
+
+local autofarm_label = Instance.new("TextLabel")
+autofarm_label.Font = Enum.Font.GothamBold
+autofarm_label.Text = "Polars Autofarm"
+autofarm_label.TextColor3 = Color3.new(1, 1, 1)
+autofarm_label.TextScaled = true
+autofarm_label.TextSize = 14
+autofarm_label.TextWrapped = true
+autofarm_label.BackgroundColor3 = Color3.new(1, 1, 1)
+autofarm_label.BackgroundTransparency = 1
+autofarm_label.BorderColor3 = Color3.new(0, 0, 0)
+autofarm_label.BorderSizePixel = 0
+autofarm_label.Position = UDim2.new(0.5, 0, 0.06, 0)
+autofarm_label.AnchorPoint = Vector2.new(0.5, 0.5)
+autofarm_label.Size = UDim2.new(0, 200, 0, 30)
+autofarm_label.Visible = true
+autofarm_label.Name = "Autofarm Label"
+autofarm_label.Parent = gui
+
+local uitext_size_constraint = Instance.new("UITextSizeConstraint")
+uitext_size_constraint.MaxTextSize = 20
+uitext_size_constraint.Parent = autofarm_label
+
+local container = Instance.new("Frame")
+container.AnchorPoint = Vector2.new(0.5, 0.5)
+container.BackgroundColor3 = Color3.new(0.0627451, 0.0627451, 0.0627451)
+container.BorderColor3 = Color3.new(0, 0, 0)
+container.BorderSizePixel = 0
+container.Position = UDim2.new(0.499000013, 0, 0.600000024, 0)
+container.Size = UDim2.new(0.934000015, 0, 0.713999987, 0)
+container.Visible = true
+container.Name = "Container"
+container.Parent = gui
+
+local uilist_layout = Instance.new("UIListLayout")
+uilist_layout.Padding = UDim.new(0.052, 0)
+uilist_layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+uilist_layout.SortOrder = Enum.SortOrder.LayoutOrder
+uilist_layout.Parent = container
+
+local uipadding = Instance.new("UIPadding")
+uipadding.PaddingBottom = UDim.new(0, 5)
+uipadding.PaddingLeft = UDim.new(0, 5)
+uipadding.PaddingRight = UDim.new(0, 5)
+uipadding.PaddingTop = UDim.new(0, 5)
+uipadding.Parent = container
+
+local uistroke_2 = Instance.new("UIStroke")
+uistroke_2.Color = Color3.new(0.188235, 0.188235, 0.188235)
+uistroke_2.Parent = container
+
+local uicorner_2 = Instance.new("UICorner")
+uicorner_2.Parent = container
+
+local cash_label = Instance.new("TextLabel")
+cash_label.Font = Enum.Font.GothamMedium
+cash_label.Text = "Cash"
+cash_label.TextColor3 = Color3.new(1, 1, 1)
+cash_label.TextSize = 14
+cash_label.AnchorPoint = Vector2.new(0.5, 0.5)
+cash_label.BackgroundColor3 = Color3.new(0.0313726, 0.0313726, 0.0313726)
+cash_label.BorderColor3 = Color3.new(0, 0, 0)
+cash_label.BorderSizePixel = 0
+cash_label.Position = UDim2.new(0.49999997, 0, 0.0714102611, 0)
+cash_label.Size = UDim2.new(1, 0, 0.119999997, 0)
+cash_label.Visible = true
+cash_label.Name = "Cash Label"
+cash_label.Parent = container
+
+local uicorner_3 = Instance.new("UICorner")
+uicorner_3.Parent = cash_label
+
+local uistroke_3 = Instance.new("UIStroke")
+uistroke_3.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+uistroke_3.Color = Color3.new(0.188235, 0.188235, 0.188235)
+uistroke_3.Parent = cash_label
+
+local cash_frame = Instance.new("Frame")
+cash_frame.AnchorPoint = Vector2.new(0.5, 0.5)
+cash_frame.BackgroundColor3 = Color3.new(0.0156863, 0.0156863, 0.0156863)
+cash_frame.BorderColor3 = Color3.new(0, 0, 0)
+cash_frame.BorderSizePixel = 0
+cash_frame.Position = UDim2.new(0.5, 0, 0.0628019348, 0)
+cash_frame.Size = UDim2.new(1, 0, 0.119999997, 0)
+cash_frame.Visible = true
+cash_frame.Name = "Cash Frame"
+cash_frame.Parent = container
+
+local uicorner_4 = Instance.new("UICorner")
+uicorner_4.Parent = cash_frame
+
+local uistroke_4 = Instance.new("UIStroke")
+uistroke_4.Color = Color3.new(0.188235, 0.188235, 0.188235)
+uistroke_4.Parent = cash_frame
+
+local text_label = Instance.new("TextLabel")
+text_label.Font = Enum.Font.Gotham
+
+--> Cash Updater
+task.spawn(function()
+    while task.wait() do
+        pcall(function()
+            text_label.Text = "$"..format(data_folder.Currency.Value)
+        end)
+    end
+end)
+
+--text_label.Text = "$1,000,000"
+
+text_label.TextColor3 = Color3.new(0, 1, 0.498039)
+text_label.TextSize = 14
+text_label.AnchorPoint = Vector2.new(0.5, 0.5)
+text_label.BackgroundColor3 = Color3.new(1, 1, 1)
+text_label.BackgroundTransparency = 1
+text_label.BorderColor3 = Color3.new(0, 0, 0)
+text_label.BorderSizePixel = 0
+text_label.Position = UDim2.new(0.499311626, 0, 0.480347365, 0)
+text_label.Size = UDim2.new(1.00137675, 0, 0.960692227, 0)
+text_label.Visible = true
+text_label.Parent = cash_frame
+
+local profits_label = Instance.new("TextLabel")
+profits_label.Font = Enum.Font.GothamMedium
+profits_label.Text = "Profit"
+profits_label.TextColor3 = Color3.new(1, 1, 1)
+profits_label.TextSize = 14
+profits_label.AnchorPoint = Vector2.new(0.5, 0.5)
+profits_label.BackgroundColor3 = Color3.new(0.0313726, 0.0313726, 0.0313726)
+profits_label.BorderColor3 = Color3.new(0, 0, 0)
+profits_label.BorderSizePixel = 0
+profits_label.Position = UDim2.new(0.49999997, 0, 0.0714102611, 0)
+profits_label.Size = UDim2.new(1, 0, 0.119999997, 0)
+profits_label.Visible = true
+profits_label.Name = "Profits Label"
+profits_label.Parent = container
+
+local uicorner_5 = Instance.new("UICorner")
+uicorner_5.Parent = profits_label
+
+local uistroke_5 = Instance.new("UIStroke")
+uistroke_5.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+uistroke_5.Color = Color3.new(0.188235, 0.188235, 0.188235)
+uistroke_5.Parent = profits_label
+
+local profit_frame = Instance.new("Frame")
+profit_frame.AnchorPoint = Vector2.new(0.5, 0.5)
+profit_frame.BackgroundColor3 = Color3.new(0.0156863, 0.0156863, 0.0156863)
+profit_frame.BorderColor3 = Color3.new(0, 0, 0)
+profit_frame.BorderSizePixel = 0
+profit_frame.Position = UDim2.new(0.5, 0, 0.0628019348, 0)
+profit_frame.Size = UDim2.new(1, 0, 0.119999997, 0)
+profit_frame.Visible = true
+profit_frame.Name = "Profit Frame"
+profit_frame.Parent = container
+
+local uicorner_6 = Instance.new("UICorner")
+uicorner_6.Parent = profit_frame
+
+local uistroke_6 = Instance.new("UIStroke")
+uistroke_6.Color = Color3.new(0.188235, 0.188235, 0.188235)
+uistroke_6.Parent = profit_frame
+
+local text_label_2 = Instance.new("TextLabel")
+text_label_2.Font = Enum.Font.Gotham
+
+--> Profit Updater
+task.spawn(function()
+    while task.wait() do
+        pcall(function()
+            text_label_2.Text = "$"..format(data_folder:WaitForChild("Currency").Value - startingcash)
+        end)
+    end
+end)
+
+--text_label_2.Text = "$500,000"
+
+text_label_2.TextColor3 = Color3.new(0, 1, 0.498039)
+text_label_2.TextSize = 14
+text_label_2.AnchorPoint = Vector2.new(0.5, 0.5)
+text_label_2.BackgroundColor3 = Color3.new(1, 1, 1)
+text_label_2.BackgroundTransparency = 1
+text_label_2.BorderColor3 = Color3.new(0, 0, 0)
+text_label_2.BorderSizePixel = 0
+text_label_2.Position = UDim2.new(0.499311626, 0, 0.480347365, 0)
+text_label_2.Size = UDim2.new(1.00137675, 0, 0.960692167, 0)
+text_label_2.Visible = true
+text_label_2.Parent = profit_frame
+
+local elapsed_label = Instance.new("TextLabel")
+elapsed_label.Font = Enum.Font.GothamMedium
+elapsed_label.Text = "Elapsed Time"
+elapsed_label.TextColor3 = Color3.new(1, 1, 1)
+elapsed_label.TextSize = 14
+elapsed_label.AnchorPoint = Vector2.new(0.5, 0.5)
+elapsed_label.BackgroundColor3 = Color3.new(0.0313726, 0.0313726, 0.0313726)
+elapsed_label.BorderColor3 = Color3.new(0, 0, 0)
+elapsed_label.BorderSizePixel = 0
+elapsed_label.Position = UDim2.new(0.49999997, 0, 0.0714102611, 0)
+elapsed_label.Size = UDim2.new(1, 0, 0.119999997, 0)
+elapsed_label.Visible = true
+elapsed_label.Name = "Elapsed Label"
+elapsed_label.Parent = container
+
+local uicorner_7 = Instance.new("UICorner")
+uicorner_7.Parent = elapsed_label
+
+local uistroke_7 = Instance.new("UIStroke")
+uistroke_7.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+uistroke_7.Color = Color3.new(0.188235, 0.188235, 0.188235)
+uistroke_7.Parent = elapsed_label
+
+local elapsed_frame = Instance.new("Frame")
+elapsed_frame.AnchorPoint = Vector2.new(0.5, 0.5)
+elapsed_frame.BackgroundColor3 = Color3.new(0.0156863, 0.0156863, 0.0156863)
+elapsed_frame.BorderColor3 = Color3.new(0, 0, 0)
+elapsed_frame.BorderSizePixel = 0
+elapsed_frame.Position = UDim2.new(0.5, 0, 0.0628019348, 0)
+elapsed_frame.Size = UDim2.new(1, 0, 0.119999997, 0)
+elapsed_frame.Visible = true
+elapsed_frame.Name = "Elapsed Frame"
+elapsed_frame.Parent = container
+
+local uicorner_8 = Instance.new("UICorner")
+uicorner_8.Parent = elapsed_frame
+
+local uistroke_8 = Instance.new("UIStroke")
+uistroke_8.Color = Color3.new(0.188235, 0.188235, 0.188235)
+uistroke_8.Parent = elapsed_frame
+
+local text_label_3 = Instance.new("TextLabel")
+text_label_3.Font = Enum.Font.Gotham
+
+--> Time Elapsed Updater
+task.spawn(function()
+    while task.wait() do
+        pcall(function()
+            text_label_3.Text = tostring(convert_to_hms(math.floor(tick() - timeelapsed)))
+        end)
+    end
+end)
+
+--text_label_3.Text = "1:00:00"
+
+text_label_3.TextColor3 = Color3.new(1, 1, 1)
+text_label_3.TextSize = 14
+text_label_3.AnchorPoint = Vector2.new(0.5, 0.5)
+text_label_3.BackgroundColor3 = Color3.new(1, 1, 1)
+text_label_3.BackgroundTransparency = 1
+text_label_3.BorderColor3 = Color3.new(0, 0, 0)
+text_label_3.BorderSizePixel = 0
+text_label_3.Position = UDim2.new(0.499311626, 0, 0.480347365, 0)
+text_label_3.Size = UDim2.new(1.00137675, 0, 0.960692167, 0)
+text_label_3.Visible = true
+text_label_3.Parent = elapsed_frame
+
+local uiaspect_ratio_constraint = Instance.new("UIAspectRatioConstraint")
+uiaspect_ratio_constraint.AspectRatio = 1.982698917388916
+uiaspect_ratio_constraint.Parent = container
+
+local invite_label = Instance.new("TextLabel")
+invite_label.Font = Enum.Font.Gotham
+invite_label.Text = "discord.gg/hXFkQ9WQqp"
+invite_label.TextColor3 = Color3.new(0.552941, 0.552941, 0.552941)
+invite_label.TextScaled = true
+invite_label.TextSize = 14
+invite_label.TextTransparency = 0.800000011920929
+invite_label.TextWrapped = true
+invite_label.AnchorPoint = Vector2.new(0.5, 0.5)
+invite_label.BackgroundColor3 = Color3.new(1, 1, 1)
+invite_label.BackgroundTransparency = 1
+invite_label.BorderColor3 = Color3.new(0, 0, 0)
+invite_label.BorderSizePixel = 0
+invite_label.Position = UDim2.new(0.497368336, 0, 0.162879258, 0)
+invite_label.Size = UDim2.new(0.526315689, 0, 0.070586212, 0)
+invite_label.Visible = true
+invite_label.Name = "Invite Label"
+invite_label.Parent = gui
+
+local uitext_size_constraint_2 = Instance.new("UITextSizeConstraint")
+uitext_size_constraint_2.MaxTextSize = 15
+uitext_size_constraint_2.Parent = invite_label
+
+local uiaspect_ratio_constraint_2 = Instance.new("UIAspectRatioConstraint")
+uiaspect_ratio_constraint_2.AspectRatio = 1.5156818628311157
+uiaspect_ratio_constraint_2.Parent = gui
+
+local image_label = Instance.new("ImageLabel")
+image_label.Image = "http://www.roblox.com/asset/?id=17115104488"
+image_label.ImageColor3 = Color3.new(0.678431, 0.678431, 0.678431)
+image_label.ScaleType = Enum.ScaleType.Slice
+image_label.AnchorPoint = Vector2.new(0.5, 0.5)
+image_label.BackgroundColor3 = Color3.new(1, 1, 1)
+image_label.BorderColor3 = Color3.new(0, 0, 0)
+image_label.BorderSizePixel = 0
+image_label.Position = UDim2.new(0.5, 0, 0.5, 0)
+image_label.Size = UDim2.new(1, 0, 1, 0)
+image_label.Visible = true
+image_label.ZIndex = -1
+image_label.Parent = holder
